@@ -110,16 +110,20 @@
                                             {{ notification.item.name }}
                                             {% elif notification.action == "HELPED" %}
                                             {{ notification.item.name }}
+                                            {% elif notification.action == "ACCEPTED" %}
+                                            You {{ notification.get_action_display }} {{ notification.house.nickname }}
                                             {% endif %}
                                         </td>
                                         <td>{% if notification.action == "CREATED" %}
                                             Yay!
                                             {% elif notification.action == "INVITED" %}
-                                            {% if notification.receiver.id == user.id %}
-                                            <form action="/profile/accept_invite" method="POST">
+                                            {% if notification.receiver.id == user.id and notification.membership.pending_invite == False %}
+                                            <form action="/profile/accept_invite/{{ notification.membership.id }}"
+                                                method="POST">
+                                                {% csrf_token %}
                                                 <button class="fancyButton">Accept?</button>
                                             </form>
-                                            {% else %}Welcome!
+                                            {% else %}Accepted
                                             {% endif %}
 
 

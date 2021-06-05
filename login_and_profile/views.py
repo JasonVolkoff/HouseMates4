@@ -108,7 +108,12 @@ def accept_invite(request, membership_id):
     if request.method == "GET":
         return redirect('/profile/house/')
     receiver = User.objects.get(id=request.session['user_id'])
-    receiver.users
+    membership = HouseMembership.objects.get(id=membership_id)
+    membership.pending_invite = False
+    Notification.objects.create(
+        house=membership.house, receiver=receiver, action="ACCEPTED")
+    request.session['main_house_id'] = membership.house.id
+    return redirect('/profile/main_house')
 
 
 def select_main_house(request, house_id):
