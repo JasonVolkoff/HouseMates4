@@ -30,8 +30,9 @@
                         <div class="mt-3 border">
                             <h3>Your Houses</h3>
                             <hr>
-                            <div class="houseSelection">
-                                {% for membership in my_memberships %}
+                            <div>
+
+                                {% for membership in user.users_memberships.all %}
                                 <form action="/profile/select_main_house/{{membership.house.id}}" method="POST">
                                     {% csrf_token %}
                                     <ul class="houseSelection">
@@ -43,6 +44,8 @@
                                     </ul>
                                 </form>
                                 {% endfor %}
+
+
                             </div>
                         </div>
                     </div>
@@ -90,14 +93,18 @@
                         <div class="notificationFeed">
                             <table class="table table-striped">
                                 <tbody>
-                                    {% for notification in my_notifications %}
+                                    {% for notification in user.received_notifications.all %}
                                     <tr>
                                         <td>{{ notification.date|date:"M d, y" }}</td>
-                                        <td>{{ notification.sender.first_name }} {{ notification.get_action_display }}
+                                        <td>
+
                                             {% if notification.action == "CREATED" %}
                                             {{ notification.house.nickname }}
+                                            {% elif notification.action == "REGISTERED" %}
+                                            You {{ notification.get_action_display }}
                                             {% elif notification.action == "INVITED" %}
-                                            {{ notification.receiver.first_name }}
+                                            {{ notification.sender.first_name }} {{ notification.sender.last_name }}
+                                            {{ notification.get_action_display }} you
                                             {% elif notification.action == "PURCHASED" %}
                                             {{ notification.item.name }}
                                             {% elif notification.action == "HELPED" %}

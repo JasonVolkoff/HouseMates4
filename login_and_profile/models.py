@@ -89,7 +89,8 @@ class Notification(models.Model):
         ('PURCHASED', 'purchased'),
         ('INVITED', 'invited'),
         ('CREATED', 'created'),
-        ('HELPED', 'helped purchase'))
+        ('HELPED', 'helped purchase'),
+        ('REGISTERED', 'registered an account'))
     sender = models.ForeignKey(
         User, on_delete=CASCADE, blank=True, null=True, related_name='sent_notifications')
     receiver = models.ForeignKey(User, on_delete=CASCADE,

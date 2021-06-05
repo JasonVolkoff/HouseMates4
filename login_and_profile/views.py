@@ -24,6 +24,7 @@ def register(request):
         return redirect('/')
     else:
         new_user = User.objects.register(request.POST)
+        Notification.objects.create(receiver=new_user, action="REGISTERED")
         request.session['user_id'] = new_user.id
         request.session['first_name'] = new_user.first_name
         return redirect('/profile')
@@ -53,18 +54,10 @@ def profile(request):
     if 'user_id' not in request.session:
         return redirect('/')
     this_user = User.objects.get(id=request.session['user_id'])
-    if HouseMembership.user.get(id=this_user).exists():
-        memberships = this_user.users_memberships.all()
-    else:
-        memberships = "No notifications so far - create a House to get started!"
-    notifications = this_user.received_notifications.all()
-    print(memberships)
     context = {
-        'my_notifications': notifications,
         'user': this_user,
-        'my_memberships': memberships,
     }
-    # add if statement to redirect to main_house if existing
+    # add if statement to redirect to main_house if existing?
     return render(request, 'profile.html', context)
 
 
@@ -97,13 +90,17 @@ def add_housemate(request):
         messages.error(request, 'No users by that email exist')
         return redirect('/profile/main_house/')
     sender = User.objects.get(id=request.session['user_id'])
-    receiver = User.objects.get(id=request.POST['email'])
+    receiverQuery = User.objects.filter(email=request.POST['email'])
+    receiver = receiverQuery[0]
+    print(receiver.first_name)
+    if HouseMembership.objects.filter(user=receiver).exists():
+        messages.error(request, 'Invite already sent')
+        return redirect('/profile/main_house/')
     house = House.objects.get(id=request.session['main_house_id'])
-    membership = HouseMembership.objects.create(
-        house=house, pending_invite=True)
-    receiver.users_memberships.add(membership)
+    HouseMembership.objects.create(
+        house=house, pending_invite=True, user=receiver)
     Notification.objects.create(
-        sender=sender, action="INVITED", receiver=receiver)
+        sender=sender, action="INVITED", receiver=receiver, house=house)
     return redirect('/profile/main_house/')
 
 
