@@ -11,6 +11,7 @@ urlpatterns = [
     path('profile', views.profile),
     path('profile/create_house', views.create_house),
     path('profile/select_main_house/<int:house_id>', views.select_main_house),
+    path('profile/accept_invite/<int:membership_id>', views.accept_invite),
     #### Protected House Routes ####
     path('profile/main_house/', views.main_house),
     path('profile/main_house/add_housemate', views.add_housemate),

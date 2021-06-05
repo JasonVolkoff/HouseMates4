@@ -85,23 +85,30 @@ def create_house(request):
 def add_housemate(request):
     if request.method == "GET":
         return redirect('/profile/house/')
-    if not User.objects.verifyAccountExists(request.POST['email']):
-        print("hello")
+    if User.objects.verifyAccountExists(request.POST['email']):
         messages.error(request, 'No users by that email exist')
         return redirect('/profile/main_house/')
     sender = User.objects.get(id=request.session['user_id'])
     receiverQuery = User.objects.filter(email=request.POST['email'])
     receiver = receiverQuery[0]
+    house = House.objects.get(id=request.session['main_house_id'])
     print(receiver.first_name)
-    if HouseMembership.objects.filter(user=receiver).exists():
+    if house.memberships.filter(user=receiver).exists():
+        # if 1 == 2:
         messages.error(request, 'Invite already sent')
         return redirect('/profile/main_house/')
-    house = House.objects.get(id=request.session['main_house_id'])
-    HouseMembership.objects.create(
+    membership = HouseMembership.objects.create(
         house=house, pending_invite=True, user=receiver)
     Notification.objects.create(
-        sender=sender, action="INVITED", receiver=receiver, house=house)
+        sender=sender, action="INVITED", receiver=receiver, house=house, membership=membership)
     return redirect('/profile/main_house/')
+
+
+def accept_invite(request, membership_id):
+    if request.method == "GET":
+        return redirect('/profile/house/')
+    receiver = User.objects.get(id=request.session['user_id'])
+    receiver.users
 
 
 def select_main_house(request, house_id):

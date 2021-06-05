@@ -45,10 +45,9 @@ class UserManager(models.Manager):
 
     def verifyAccountExists(self, email):
         users = self.filter(email=email)
-        print(users)
         if not users:
-            return False
-        return True
+            return True
+        return False
 
 
 class User(models.Model):
@@ -84,6 +83,14 @@ class Item(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 
+class HouseMembership(models.Model):
+    pending_invite = models.BooleanField(default=True)
+    house = models.ForeignKey(
+        House, related_name="memberships", on_delete=CASCADE,)
+    user = models.ForeignKey(
+        User, related_name="users_memberships", on_delete=CASCADE)
+
+
 class Notification(models.Model):
     ACTIONS = (
         ('PURCHASED', 'purchased'),
@@ -101,15 +108,9 @@ class Notification(models.Model):
                              related_name='item_notification', on_delete=CASCADE)
     action = models.CharField(
         choices=ACTIONS, default='CREATED', max_length=32)
+    membership = models.ForeignKey(
+        HouseMembership, blank=True, null=True, related_name='notification', on_delete=CASCADE)
     date = models.DateTimeField(auto_now_add=True)
-
-
-class HouseMembership(models.Model):
-    pending_invite = models.BooleanField(default=True)
-    house = models.ForeignKey(
-        House, related_name="memberships", on_delete=CASCADE,)
-    user = models.ForeignKey(
-        User, related_name="users_memberships", on_delete=CASCADE)
 
 
 class BalanceDue(models.Model):
