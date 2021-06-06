@@ -74,7 +74,7 @@ def create_house(request):
     HouseMembership.objects.create(
         house=new_house, pending_invite=False, user=this_user)
     Notification.objects.create(
-        sender=this_user, house=new_house, action="CREATED")
+        receiver=this_user, house=new_house, action="CREATED")
 
     request.session['main_house_id'] = new_house.id
     for key, value in request.session.items():
@@ -107,11 +107,11 @@ def add_housemate(request):
 def accept_invite(request, membership_id):
     if request.method == "GET":
         return redirect('/profile/house/')
-    receiver = User.objects.get(id=request.session['user_id'])
     membership = HouseMembership.objects.get(id=membership_id)
     membership.pending_invite = False
+    this_user = User.objects.get(id=request.session['user_id'])
     Notification.objects.create(
-        house=membership.house, receiver=receiver, action="ACCEPTED")
+        sender=this_user, house=membership.house, action="ACCEPTED")
     request.session['main_house_id'] = membership.house.id
     return redirect('/profile/main_house')
 

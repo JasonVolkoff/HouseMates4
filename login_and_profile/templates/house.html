@@ -86,16 +86,23 @@
                                         {{ notification.item.name }}
                                         {% elif notification.action == "HELPED" %}
                                         {{ notification.item.name }}
+                                        {% elif notification.action == "ACCEPTED" %}
+                                        {{ notification.house.nickname }}
                                         {% endif %}
                                     </td>
                                     <td>{% if notification.action == "CREATED" %}
                                         Yay!
                                         {% elif notification.action == "INVITED" %}
-                                        Welcome!
+                                        {% if notification.membership.pending_invite == True %}
+                                        Pending
+                                        {% else %} Accepted
+                                        {% endif %}
                                         {% elif notification.action == "PURCHASED" %}
                                         {{ notification.item.price }}
-                                        {% elif notification.action == "HELPED" %}
-                                        {{ notification.item.price }}
+                                        {% comment %} {% elif notification.action == "HELPED" %}
+                                        {{ notification.item.price }} {% endcomment %}
+                                        {% elif notification.action == "ACCEPTED" %}
+                                        Welcome!
                                         {% endif %}</td>
                                 </tr>
                                 {% endfor %}

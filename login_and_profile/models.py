@@ -113,6 +113,43 @@ class Notification(models.Model):
         HouseMembership, blank=True, null=True, related_name='notification', on_delete=CASCADE)
     date = models.DateTimeField(auto_now_add=True)
 
+    def profileFormat(self):
+        action = f"{self.get_action_display()}"
+        receiver = self.receiver
+        house = self.house
+        item = f"{self.item}"
+        if self.action == "PURCHASED":
+            notification = f'You {action} {item.name}'
+        elif self.action == "INVITED":
+            notification = f'You {action} {receiver.first_name} {receiver.last_name} to {house.nickanme}'
+        elif self.action == "CREATED":
+            notification = f'You {action} {house.nickname}'
+        elif self.action == "HELPED":
+            pass  # add content
+        elif self.action == "REGISTERED":
+            notification = f'You {action}'
+        elif self.action == "ACCEPTED":
+            notification = f'You {action} {house.nickname}'
+        return notification
+
+    def houseFormat(self):
+        action = f"{self.get_action_display()}"
+        sender = self.sender
+        receiver = self.receiver
+        house = self.house
+        item = f"{self.item}"
+        if self.action == "PURCHASED":
+            notification = f'{sender} {action} {item.name}'
+        elif self.action == "INVITED":
+            notification = f'{sender} {action} {receiver.first_name} {receiver.last_name} to {house.nickanme}'
+        elif self.action == "CREATED":
+            notification = f'{receiver.first_name} {action} {house.nickname}'
+        elif self.action == "HELPED":
+            pass  # add content
+        elif self.action == "ACCEPTED":
+            notification = f'{sender} {action} {house.nickname}'
+        return notification
+
 
 class BalanceDue(models.Model):
     balance = models.DecimalField(

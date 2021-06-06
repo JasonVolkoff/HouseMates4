@@ -33,6 +33,7 @@
                             <div>
 
                                 {% for membership in user.users_memberships.all %}
+                                {% if membership.pending_invite == False %}
                                 <form action="/profile/select_main_house/{{membership.house.id}}" method="POST">
                                     {% csrf_token %}
                                     <ul class="houseSelection">
@@ -43,9 +44,8 @@
                                         </li>
                                     </ul>
                                 </form>
+                                {% endif %}
                                 {% endfor %}
-
-
                             </div>
                         </div>
                     </div>
@@ -93,44 +93,50 @@
                         <div class="notificationFeed">
                             <table class="table table-striped">
                                 <tbody>
+                                    {% comment %} turn into block {% endcomment %}
                                     {% for notification in user.received_notifications.all %}
                                     <tr>
                                         <td>{{ notification.date|date:"M d, y" }}</td>
                                         <td>
 
-                                            {% if notification.action == "CREATED" %}
-                                            {{ notification.house.nickname }}
-                                            {% elif notification.action == "REGISTERED" %}
-                                            You {{ notification.get_action_display }}
-                                            {% elif notification.action == "INVITED" %}
+                                            {{ notification.profileFormat }}
 
+
+
+
+
+                                            {% comment %} {% if notification.action == "INVITED" %}
                                             {{ notification.sender.first_name }} {{ notification.sender.last_name }}
-                                            {{ notification.get_action_display }} you
-                                            {% elif notification.action == "PURCHASED" %}
-                                            {{ notification.item.name }}
-                                            {% elif notification.action == "HELPED" %}
-                                            {{ notification.item.name }}
-                                            {% elif notification.action == "ACCEPTED" %}
-                                            You {{ notification.get_action_display }} {{ notification.house.nickname }}
+                                            {% else %}You
                                             {% endif %}
+                                            {{ notification.get_action_display }}
+
+
+                                            {% if notification.action  == "INVITED" %}
+                                            you to {{ notification.house.nickname }}
+                                            {% elif notifcation.action == "CREATED" %}
+                                            {{ notification.house.nickname }}
+                                            {% elif notification.action == "PURCHASED" %}
+                                            {{ notification.item.name }} in {{ notification.house.nickname }}
+                                            {% elif notification.action == "ACCEPTED" %}
+                                            {{ notification.house.nickname }}
+
+                                            {% endif %}{% endcomment %}
                                         </td>
                                         <td>{% if notification.action == "CREATED" %}
-                                            Yay!
+                                            Welcome!
                                             {% elif notification.action == "INVITED" %}
                                             {% if notification.receiver.id == user.id and notification.membership.pending_invite == False %}
                                             <form action="/profile/accept_invite/{{ notification.membership.id }}"
                                                 method="POST">
                                                 {% csrf_token %}
-                                                <button class="fancyButton">Accept?</button>
+                                                <button class="fancyButton">Accept</button>
                                             </form>
                                             {% else %}Accepted
                                             {% endif %}
-
-
                                             {% elif notification.action == "PURCHASED" %}
                                             {{ notification.item.price }}
-                                            {% elif notification.action == "HELPED" %}
-                                            {{ notification.item.price }}
+
                                             {% endif %}</td>
                                     </tr>
                                     {% endfor %}
