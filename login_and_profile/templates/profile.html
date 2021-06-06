@@ -31,9 +31,9 @@
                             <h3>Your Houses</h3>
                             <hr>
                             <div>
-
+                                {% if user.users_memberships.checkFalse %}
                                 {% for membership in user.users_memberships.all %}
-                                {% if membership.pending_invite == False %}
+
                                 <form action="/profile/select_main_house/{{membership.house.id}}" method="POST">
                                     {% csrf_token %}
                                     <ul class="houseSelection">
@@ -44,8 +44,10 @@
                                         </li>
                                     </ul>
                                 </form>
-                                {% endif %}
+
                                 {% endfor %}
+                                {% endif %}
+
                             </div>
                         </div>
                     </div>
@@ -126,7 +128,7 @@
                                         <td>{% if notification.action == "CREATED" %}
                                             Welcome!
                                             {% elif notification.action == "INVITED" %}
-                                            {% if notification.receiver.id == user.id and notification.membership.pending_invite == False %}
+                                            {% if notification.membership.pending_invite == True %}
                                             <form action="/profile/accept_invite/{{ notification.membership.id }}"
                                                 method="POST">
                                                 {% csrf_token %}

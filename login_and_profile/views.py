@@ -93,12 +93,15 @@ def select_main_house(request, house_id):
 
 def accept_invite(request, membership_id):
     if request.method == "GET":
-        return redirect('/profile/house/')
+        return redirect('/profile')
     membership = HouseMembership.objects.get(id=membership_id)
+    print(membership.house.nickname)
     membership.pending_invite = False
+    print(membership.pending_invite)
+    print(membership.user.first_name)
     this_user = User.objects.get(id=request.session['user_id'])
     Notification.objects.create(
-        sender=this_user, house=membership.house, action="ACCEPTED")
+        receiver=this_user, sender=this_user, house=membership.house, action="ACCEPTED")
     request.session['main_house_id'] = membership.house.id
     return redirect('/profile/main_house')
 
@@ -118,7 +121,6 @@ def add_housemate(request):
     house = House.objects.get(id=request.session['main_house_id'])
     print(receiver.first_name)
     if house.memberships.filter(user=receiver).exists():
-        # if 1 == 2:
         messages.error(request, 'Invite already sent')
         return redirect('/profile/main_house/')
     membership = HouseMembership.objects.create(

@@ -18,7 +18,7 @@
     <div>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <a class="offset-1 navbar-brand"> HouseMates</a>
-            <a class="offset-8 nav-item nav-link" href="/profile">{{ user.first_name }} {{ user.last_name }} </a>
+            <a class="offset-8 nav-item nav-link" href="/profile">{{ request.session.first_name }}'s Profile </a>
         </nav>
     </div>
     <div style="height: 1800px;">

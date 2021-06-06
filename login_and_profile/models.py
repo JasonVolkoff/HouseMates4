@@ -91,6 +91,10 @@ class HouseMembership(models.Model):
     user = models.ForeignKey(
         User, related_name="users_memberships", on_delete=CASCADE)
 
+    def checkFalse(self):
+        if self.pending_invite == False:
+            return True
+
 
 class Notification(models.Model):
     ACTIONS = (
@@ -118,11 +122,12 @@ class Notification(models.Model):
         action = f"{self.get_action_display()}"
         receiver = self.receiver
         house = self.house
-        item = f"{self.item}"
+        item = self.item
+        sender = self.sender
         if self.action == "PURCHASED":
             notification = f'You {action} {item.name}'
         elif self.action == "INVITED":
-            notification = f'You {action} {receiver.first_name} {receiver.last_name} to {house.nickanme}'
+            notification = f'{sender.first_name} {sender.last_name} {action} you to {house.nickname}'
         elif self.action == "CREATED":
             notification = f'You {action} {house.nickname}'
         elif self.action == "HELPED":
@@ -142,7 +147,7 @@ class Notification(models.Model):
         if self.action == "PURCHASED":
             notification = f'{sender.first_name} {action} {item.name}'
         elif self.action == "INVITED":
-            notification = f'{sender.first_name} {action} {receiver.first_name} {receiver.last_name} to {house.nickanme}'
+            notification = f'{sender.first_name} {action} {receiver.first_name} {receiver.last_name} to {house.nickname}'
         elif self.action == "CREATED":
             notification = f'{receiver.first_name} {action} {house.nickname}'
         elif self.action == "HELPED":
