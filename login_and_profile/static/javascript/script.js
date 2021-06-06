@@ -9,3 +9,10 @@
 // closePopup1.addEventListener('click', () => {
 // 	popup1.style.display = "none";
 // })
+$(document).ready(function () {
+    $('#price').on('change click keyup input paste',(function (event) {
+    $(this).val(function (index, value) {
+        return '$' + value.replace(/(?!\.)\D/g, "").replace(/(?<=\..*)\./g, "").replace(/(?<=\.\d\d).*/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    });
+}));
+})

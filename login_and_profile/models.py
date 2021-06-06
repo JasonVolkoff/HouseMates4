@@ -3,6 +3,7 @@ from django.db import models
 import re
 from django.db.models.deletion import CASCADE
 import bcrypt
+from decimal import Decimal
 
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 # Create your models here.
@@ -74,8 +75,8 @@ class House(models.Model):
 
 class Item(models.Model):
     name = models.CharField(max_length=255)
-    description = models.TextField()
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(
+        max_digits=10, decimal_places=2, default=Decimal(0))
     owned_by = models.ManyToManyField(User, related_name="users_items")
     location = models.ForeignKey(
         House, related_name="items", on_delete=CASCADE)
@@ -137,17 +138,17 @@ class Notification(models.Model):
         sender = self.sender
         receiver = self.receiver
         house = self.house
-        item = f"{self.item}"
+        item = self.item
         if self.action == "PURCHASED":
-            notification = f'{sender} {action} {item.name}'
+            notification = f'{sender.first_name} {action} {item.name}'
         elif self.action == "INVITED":
-            notification = f'{sender} {action} {receiver.first_name} {receiver.last_name} to {house.nickanme}'
+            notification = f'{sender.first_name} {action} {receiver.first_name} {receiver.last_name} to {house.nickanme}'
         elif self.action == "CREATED":
             notification = f'{receiver.first_name} {action} {house.nickname}'
         elif self.action == "HELPED":
             pass  # add content
         elif self.action == "ACCEPTED":
-            notification = f'{sender} {action} {house.nickname}'
+            notification = f'{sender.first_name} {action} {house.nickname}'
         return notification
 
 

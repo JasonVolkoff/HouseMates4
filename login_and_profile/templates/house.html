@@ -44,51 +44,45 @@
                             </form>
                         </div>
                     </div>
-                    <div id="banner" style="height: 200px;" class="border">
-                        <div id="img">
-                            img
-                            {% comment %} add background image upload functionality {% endcomment %}
-                            {% comment %} <img src="" alt=""> {% endcomment %}
-                        </div>
-                        <div id="profileCircle">
-                            <i id="profileImg " class='fas fa-user-alt' style='font-size:45px'></i>
-                        </div>
-                    </div>
-                    <div id="profileInfo">
-                        <div class="row">
-                            <div class="col-6">
-                                <p class="mb-0"><b>{{ user.first_name }} {{ user.last_name }}</b></p>
-                                <p>{{ user.email }}</p>
-                            </div>
-                            <div class="col-6">
-                                <form action="#">
-                                    <button class="float-right col-6 fancyButton">Edit Profile</button>
-                                </form>
+                    <hr class="mt-0">
+                    <div id="itemBlock" class="row mt-1">
+                        <div id="profileCol" class="col-2">
+                            <div id="profileCircle2">
+                                <i id="profileImg " class='fas fa-user-alt' style='font-size:45px'></i>
                             </div>
                         </div>
-                        <div class="text-center mt-5" id="notifications">
-                            <p>Notifications</p>
-                            <hr>
+                        <div id="itemForm" class="col-10">
+                            <form class="ml-3" action="/profile/main_house/add_item" method="POST">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-7 offset-1">
+                                        <div class="row">
+                                            <input id="noBox" name="name" placeholder="Add item name" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="col-3 offset-1">
+                                        <div>
+                                            <input placeholder="$" type="text" id="price" name="price" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <button class="fancyButton float-right">Submit</button>
+                            </form>
                         </div>
                     </div>
-                    <div class="notificationFeed">
+                    <div class="text-center mt-3" id="notifications">
+                        <p>Notifications</p>
+                        <hr>
+                    </div>
+                    <div class="row notificationFeed">
                         <table class="table table-striped">
                             <tbody>
-                                {% for notification in all_notifications %}
+                                {% for notification in house.notifications.all reversed %}
                                 <tr>
                                     <td>{{ notification.date|date:"M d, y" }}</td>
-                                    <td>{{ notification.sender.first_name }} {{ notification.get_action_display }}
-                                        {% if notification.action == "CREATED" %}
-                                        {{ notification.house.nickname }}
-                                        {% elif notification.action == "INVITED" %}
-                                        {{ notification.receiver.first_name }}
-                                        {% elif notification.action == "PURCHASED" %}
-                                        {{ notification.item.name }}
-                                        {% elif notification.action == "HELPED" %}
-                                        {{ notification.item.name }}
-                                        {% elif notification.action == "ACCEPTED" %}
-                                        {{ notification.house.nickname }}
-                                        {% endif %}
+                                    <td>
+                                        {{ notification.houseFormat }}
                                     </td>
                                     <td>{% if notification.action == "CREATED" %}
                                         Yay!
@@ -138,6 +132,22 @@
             </div>
         </div>
     </div>
+
 </body>
+{% load static %}
+<script src="{% static 'javascript/script.js' %}"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#price').on('change click keyup input paste', (function (event) {
+            $(this).val(function (index, value) {
+                return value.replace(/(?!\.)\D/g, "").replace(
+                    /(?<=\..*)\./g, "").replace(
+                    /(?<=\.\d\d).*/g, "").replace(
+                    /\B(?=(\d{3})+(?!\d))/g, ",");
+            });
+        }));
+    })
+</script>
 
 </html>

@@ -94,7 +94,7 @@
                             <table class="table table-striped">
                                 <tbody>
                                     {% comment %} turn into block {% endcomment %}
-                                    {% for notification in user.received_notifications.all %}
+                                    {% for notification in user.received_notifications.all reversed %}
                                     <tr>
                                         <td>{{ notification.date|date:"M d, y" }}</td>
                                         <td>

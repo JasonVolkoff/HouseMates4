@@ -82,6 +82,30 @@ def create_house(request):
     return redirect(f'/profile/main_house/')
 
 
+def select_main_house(request, house_id):
+    if request.method == "GET":
+        return redirect('/profile')
+    request.session['main_house_id'] = house_id
+    for key, value in request.session.items():
+        print('{} => {}'.format(key, value))
+    return redirect('/profile/main_house/')
+
+
+def accept_invite(request, membership_id):
+    if request.method == "GET":
+        return redirect('/profile/house/')
+    membership = HouseMembership.objects.get(id=membership_id)
+    membership.pending_invite = False
+    this_user = User.objects.get(id=request.session['user_id'])
+    Notification.objects.create(
+        sender=this_user, house=membership.house, action="ACCEPTED")
+    request.session['main_house_id'] = membership.house.id
+    return redirect('/profile/main_house')
+
+
+################### House Methods ###################
+
+
 def add_housemate(request):
     if request.method == "GET":
         return redirect('/profile/house/')
@@ -104,38 +128,25 @@ def add_housemate(request):
     return redirect('/profile/main_house/')
 
 
-def accept_invite(request, membership_id):
-    if request.method == "GET":
-        return redirect('/profile/house/')
-    membership = HouseMembership.objects.get(id=membership_id)
-    membership.pending_invite = False
-    this_user = User.objects.get(id=request.session['user_id'])
-    Notification.objects.create(
-        sender=this_user, house=membership.house, action="ACCEPTED")
-    request.session['main_house_id'] = membership.house.id
-    return redirect('/profile/main_house')
-
-
-def select_main_house(request, house_id):
-    if request.method == "GET":
-        return redirect('/profile')
-    request.session['main_house_id'] = house_id
-    for key, value in request.session.items():
-        print('{} => {}'.format(key, value))
-    return redirect('/profile/main_house/')
-
-
 def main_house(request):
     if 'main_house_id' not in request.session:
         return redirect('/profile')
-    this_user = User.objects.get(id=request.session['user_id'])
     this_house = House.objects.get(id=request.session['main_house_id'])
-    all_items = this_house.items.all()
-    all_notifications = this_house.notifications.all()
     context = {
-        'all_notifications': all_notifications,
         'house': this_house,
-        'user': this_user,
-        'all_items': all_items
     }
     return render(request, 'house.html', context)
+
+
+def add_item(request):
+    if request.method == "GET":
+        redirect('/profile/main_house')
+    this_user = User.objects.get(id=request.session['user_id'])
+    this_house = House.objects.get(id=request.session['main_house_id'])
+    this_item = Item.objects.create(
+        name=request.POST['name'], price=float(request.POST['price']), location=this_house)
+    this_user.users_items.add(this_item)
+    Notification.objects.create(
+        sender=this_user, action="PURCHASED", item=this_item, house=this_house)
+    print(this_item)
+    return redirect('/profile/main_house')

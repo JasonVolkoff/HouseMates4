@@ -18,6 +18,27 @@
     left: 15px;
 }
 
+#profileCircle2 {
+    border-radius: 50%;
+    width: 70px;
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 8px #39cff5;
+    -webkit-box-shadow: 0 0 8px #39cff5;
+    -moz-box-shadow: 0 0 8px #39cff5;
+    background-color: white;
+}
+
+#profileCol {
+    float: inline-start;
+}
+
+#itemForm>form {
+    margin-top: 20px;
+}
+
 #profileImg {
     width: 100%;
     height: auto;
@@ -67,6 +88,27 @@
     margin: 0;
     padding: 0;
 }
+
+#price {
+    border-style: hidden;
+    outline: none;
+    width: 50px;
+}
+
+#noBox {
+    border-style: hidden;
+    outline: none;
+    width: 100%;
+}
+
+/* #itemBlock {
+    height: 50px;
+}
+
+#itemForm {
+    height: 50px;
+} */
+
 
 
 /* #popup-1 {
