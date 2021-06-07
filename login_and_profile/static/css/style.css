@@ -1,5 +1,17 @@
+body {
+    font-family: "Helvetica Neue";
+}
+
 #banner {
     position: relative;
+    background-color: rgb(226, 255, 255);
+}
+
+.border1 {
+    border-style: solid;
+    border-width: 1px;
+    border-color: #dee2e6;
+    border-radius: 20px;
 }
 
 #profileCircle {
@@ -22,6 +34,24 @@
     border-radius: 50%;
     width: 70px;
     height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 8px #39cff5;
+    -webkit-box-shadow: 0 0 8px #39cff5;
+    -moz-box-shadow: 0 0 8px #39cff5;
+    background-color: white;
+}
+
+.smallText {
+    font-size: 12px;
+    padding-right: 0px !important;
+}
+
+#roommateCircle {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -83,6 +113,26 @@
     top: 1px;
 }
 
+.fancyButton2 {
+    box-shadow: inset 0px 1px 0px 0px #ffffff;
+    background: linear-gradient(to bottom, #ffffff 5%, #f6f6f6 100%);
+    width: 150px !important;
+    height: 30px;
+    background-color: #ffffff;
+    border-radius: 20px;
+    border: 1px solid #dcdcdc;
+    display: inline-block;
+    cursor: pointer;
+    color: #39cff5;
+    border-color: #39cff5;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 0;
+    text-decoration: none;
+    text-align: center;
+    text-shadow: 0px 1px 0px #ffffff;
+}
+
 .houseSelection {
     list-style-type: none;
     margin: 0;
@@ -93,12 +143,14 @@
     border-style: hidden;
     outline: none;
     width: 50px;
+    background-color: rgb(253, 253, 253);
 }
 
 #noBox {
     border-style: hidden;
     outline: none;
     width: 100%;
+    background-color: rgb(253, 253, 253);
 }
 
 /* #itemBlock {

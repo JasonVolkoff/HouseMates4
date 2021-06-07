@@ -10,8 +10,10 @@
         integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% load static %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{% static 'javascript/script.js' %}"></script>
     <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
-    <script src="{% static 'javascript/script.js' %}"></script>
 </head>
 
 <body>
@@ -21,13 +23,34 @@
             <a class="offset-8 nav-item nav-link" href="/profile">{{ request.session.first_name }}'s Profile </a>
         </nav>
     </div>
-    <div style="height: 1800px;">
+    <div>
         <div class="row h-100">
             <div class="col-4">
                 <div class="row">
                     <div class="col-7 offset-5">
-                        <div class="mt-3 border">
-                            test
+                        <div class="mt-3 p-3 border1">
+                            {% for membership in house.memberships.all %}
+                            {% if membership.pending_invite == False %}
+                            <div class="row mt-2">
+                                <div class="col-8">
+                                    <div class="row">
+                                        <div class="col-3" id="roommateImgDiv">
+                                            <i id="roommateCircle" class='fas fa-user-alt' style='font-size:35px'></i>
+                                        </div>
+                                        <div class="mt-3 col-8 offset-1">
+                                            {{ membership.user.first_name }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-3 col-4">
+                                    $
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% endfor %}
+
+
                         </div>
                     </div>
                 </div>
@@ -72,7 +95,7 @@
                         </div>
                     </div>
                     <div class="text-center mt-3" id="notifications">
-                        <p>Notifications</p>
+                        <p id="testJavascript">Notifications</p>
                         <hr>
                     </div>
                     <div class="row notificationFeed">
@@ -80,11 +103,12 @@
                             <tbody>
                                 {% for notification in house.notifications.all reversed %}
                                 <tr>
-                                    <td>{{ notification.date|date:"M d, y" }}</td>
-                                    <td>
+                                    <td class="smallText align-middle">{{ notification.date|date:"M d, y" }}</td>
+                                    <td class="align-middle">
                                         {{ notification.houseFormat }}
                                     </td>
-                                    <td>{% if notification.action == "CREATED" %}
+                                    <td class="text-center align-middle">
+                                        {% if notification.action == "CREATED" %}
                                         Yay!
                                         {% elif notification.action == "INVITED" %}
                                         {% if notification.membership.pending_invite == True %}
@@ -92,7 +116,28 @@
                                         {% else %} Accepted
                                         {% endif %}
                                         {% elif notification.action == "PURCHASED" %}
-                                        {{ notification.item.price }}
+                                        ${{ notification.item.price }}
+
+
+
+
+                                        {% if notification.item.user.id == user.id %}
+
+                                        <form action="/profile/accept_invite/{{ notification.membership.id }}"
+                                            method="POST">
+                                            {% csrf_token %}
+                                            <button class="fancyButton">Accept</button>
+                                        </form>
+
+
+                                        {% else %}Accepted
+
+
+                                        {% endif %}
+
+
+
+
                                         {% comment %} {% elif notification.action == "HELPED" %}
                                         {{ notification.item.price }} {% endcomment %}
                                         {% elif notification.action == "ACCEPTED" %}
@@ -108,7 +153,7 @@
             <div class="col-4">
                 <div class="row">
                     <div class="col-7">
-                        <div class="mt-3 border">
+                        <div class="mt-3 p-3 border1">
                             <h3>Add a HouseMate</h3>
                             <hr>
                             <form class="pl-2 pr-2" action="/profile/main_house/add_housemate" method="POST">
@@ -134,20 +179,5 @@
     </div>
 
 </body>
-{% load static %}
-<script src="{% static 'javascript/script.js' %}"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script>
-    $(document).ready(function () {
-        $('#price').on('change click keyup input paste', (function (event) {
-            $(this).val(function (index, value) {
-                return value.replace(/(?!\.)\D/g, "").replace(
-                    /(?<=\..*)\./g, "").replace(
-                    /(?<=\.\d\d).*/g, "").replace(
-                    /\B(?=(\d{3})+(?!\d))/g, ",");
-            });
-        }));
-    })
-</script>
 
 </html>

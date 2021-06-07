@@ -83,9 +83,19 @@ class Item(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def checkOwnership(self):
+        # user = User.objects.get(id=user_id)
+        # if self.owned_by.get(id=user).exists():
+        #     return user_id
+        # else:
+        #     return user_id
+        return "hello"
+
+# Add Item fractional ownership model to indicate how much of the item you own
+
 
 class HouseMembership(models.Model):
-    pending_invite = models.BooleanField(default=True)
+    pending_invite = models.BooleanField()
     house = models.ForeignKey(
         House, related_name="memberships", on_delete=CASCADE,)
     user = models.ForeignKey(
@@ -94,6 +104,8 @@ class HouseMembership(models.Model):
     def checkFalse(self):
         if self.pending_invite == False:
             return True
+        else:
+            return False
 
 
 class Notification(models.Model):
@@ -155,6 +167,19 @@ class Notification(models.Model):
         elif self.action == "ACCEPTED":
             notification = f'{sender.first_name} {action} {house.nickname}'
         return notification
+
+    def responseFormat(self):
+        if self.action == "Invited":
+            if self.membership.pending_invite == True:
+                return "Pending"
+            else:
+                return "Accepted"
+        if self.action == "Created":
+            return "Yay!"
+        if self.action == "Purchased":
+            return self.item.price
+        if self.action == "Helped":
+            return self.item.split_cost
 
 
 class BalanceDue(models.Model):

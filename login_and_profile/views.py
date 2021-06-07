@@ -25,6 +25,7 @@ def register(request):
     else:
         new_user = User.objects.register(request.POST)
         Notification.objects.create(receiver=new_user, action="REGISTERED")
+        request.session.clear()
         request.session['user_id'] = new_user.id
         request.session['first_name'] = new_user.first_name
         return redirect('/profile')
@@ -37,6 +38,7 @@ def login(request):
         messages.error(request, 'Invalid Email/Password')
         return redirect('/')
     user = User.objects.get(email=request.POST['email'])
+    request.session.clear()
     request.session['user_id'] = user.id
     request.session['first_name'] = user.first_name
     return redirect('/profile')
@@ -75,7 +77,6 @@ def create_house(request):
         house=new_house, pending_invite=False, user=this_user)
     Notification.objects.create(
         receiver=this_user, house=new_house, action="CREATED")
-
     request.session['main_house_id'] = new_house.id
     for key, value in request.session.items():
         print('{} => {}'.format(key, value))
@@ -95,10 +96,8 @@ def accept_invite(request, membership_id):
     if request.method == "GET":
         return redirect('/profile')
     membership = HouseMembership.objects.get(id=membership_id)
-    print(membership.house.nickname)
     membership.pending_invite = False
-    print(membership.pending_invite)
-    print(membership.user.first_name)
+    membership.save()
     this_user = User.objects.get(id=request.session['user_id'])
     Notification.objects.create(
         receiver=this_user, sender=this_user, house=membership.house, action="ACCEPTED")
@@ -119,7 +118,6 @@ def add_housemate(request):
     receiverQuery = User.objects.filter(email=request.POST['email'])
     receiver = receiverQuery[0]
     house = House.objects.get(id=request.session['main_house_id'])
-    print(receiver.first_name)
     if house.memberships.filter(user=receiver).exists():
         messages.error(request, 'Invite already sent')
         return redirect('/profile/main_house/')
@@ -150,5 +148,16 @@ def add_item(request):
     this_user.users_items.add(this_item)
     Notification.objects.create(
         sender=this_user, action="PURCHASED", item=this_item, house=this_house)
-    print(this_item)
+    return redirect('/profile/main_house')
+
+
+def help_purchase(request, item_id):
+    if request.method == "GET":
+        return redirect('/profile/main_house')
+    this_user = User.objects.get(id=request.session['user_id'])
+    this_item = Item.objects.get(id=item_id)
+    this_house = House.objects.get(id=request.session['main_house_id'])
+    this_user.users_items.add(this_item)
+    Notification.objects.create(
+        sender=this_user, action="HELPED", item=this_item, house=this_house)
     return redirect('/profile/main_house')
