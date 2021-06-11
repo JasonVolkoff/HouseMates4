@@ -14,6 +14,7 @@ urlpatterns = [
     path('profile/accept_invite/<int:membership_id>', views.accept_invite),
     #### Protected House Routes ####
     path('profile/main_house/', views.main_house),
+    path('profile/main_house/delete_item/<int:notification_id>', views.delete_item),
     path('profile/main_house/add_housemate', views.add_housemate),
     path('profile/main_house/add_item', views.add_item),
     path('profile/main_house/help_purchase/<int:item_id>', views.help_purchase),

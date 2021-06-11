@@ -161,3 +161,13 @@ def help_purchase(request, item_id):
     Notification.objects.create(
         sender=this_user, action="HELPED", item=this_item, house=this_house)
     return redirect('/profile/main_house')
+
+
+def delete_item(request, notification_id):
+    if request.method == "GET":
+        return redirect('profile/main_house')
+    this_notification = Notification.objects.get(id=notification_id)
+    this_notification.item.delete()
+    this_notification.delete()
+
+    return redirect('/profile/main_house')

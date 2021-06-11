@@ -117,29 +117,13 @@
                                         {% endif %}
                                         {% elif notification.action == "PURCHASED" %}
                                         ${{ notification.item.price }}
-
-
-
-
-                                        {% if notification.item.user.id == user.id %}
-
-                                        <form action="/profile/accept_invite/{{ notification.membership.id }}"
+                                        {% if notification.sender.id == request.session.user_id %}
+                                        <form action="/profile/main_house/delete_item/{{ notification.id }}"
                                             method="POST">
                                             {% csrf_token %}
-                                            <button class="fancyButton">Accept</button>
+                                            <button class="fancyButton">delete</button>
                                         </form>
-
-
-                                        {% else %}Accepted
-
-
                                         {% endif %}
-
-
-
-
-                                        {% comment %} {% elif notification.action == "HELPED" %}
-                                        {{ notification.item.price }} {% endcomment %}
                                         {% elif notification.action == "ACCEPTED" %}
                                         Welcome!
                                         {% endif %}</td>

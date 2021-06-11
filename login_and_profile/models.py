@@ -83,13 +83,6 @@ class Item(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def checkOwnership(self):
-        # user = User.objects.get(id=user_id)
-        # if self.owned_by.get(id=user).exists():
-        #     return user_id
-        # else:
-        #     return user_id
-        return "hello"
 
 # Add Item fractional ownership model to indicate how much of the item you own
 
